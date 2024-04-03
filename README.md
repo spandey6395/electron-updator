@@ -1,11 +1,5 @@
 # Generic Electron Auto Update Example
 
-After struggling with this for few days I decided to write this guide, hopefully it will help someone.
-
-I have to give credit to the guy who wrote made the initial guide. I updated his code to work with electron 10.1.5.
-
-Here is the link to [`Matt Haggard and his electron-updater-example`](https://github.com/iffy/electron-updater-example)
-
 This repo contains the **bare minimum code** to have an auto-updating Electron app using [`electron-updater`](https://github.com/electron-userland/electron-builder/tree/master/packages/electron-updater).
 
 ## Getting started
@@ -46,9 +40,7 @@ If everything went well, you can continue with this guide.
     "certificatePassword": "some_password"
     ```
     Note: self-signed certificate can only be used for testing purposes.
-    You can get more help on these websites:
-    * [`How to: Create Temporary Certificates for Use During Development`](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-create-temporary-certificates-for-use-during-development)
-    * [`New-SelfSignedCertificate`](https://docs.microsoft.com/en-us/powershell/module/pkiclient/new-selfsignedcertificate?view=win10-ps)
+
 
 ## Packaging And Testing
 
@@ -73,4 +65,4 @@ npm run dist
 ### Testing Auto Update
 
 When npm run dist finishes with the building process, open /dist folder and install the app on your system. After successful install, bump the version in package.json and and run the "npm run dist" command once again. 
-When done, copy paste the contents of /dist folder to /wwwroot folder and run "npm run serve". Open the previous version that you installed on your system and voilà :)!
+When done, copy paste the contents of /dist folder to /wwwroot folder and run "npm run serve". Open the previous version that you installed on your system)!

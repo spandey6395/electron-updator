@@ -1,6 +1,6 @@
 {
   "name": "electron-updater-example",
-  "version": "0.1.0",
+  "version": "0.9.6",
   "main": "main.js",
   "description": "electron-updater example project",
   "author": {
@@ -10,23 +10,23 @@
   },
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder -l",
+    "dist": "electron-builder -w",
     "serve": "http-server wwwroot/ -p 8080"
   },
   "dependencies": {
-    "electron-log": "^4.3.0",
-    "electron-updater": "^4.3.5"
+    "electron-log": "^5.1.2",
+    "electron-updater": "^6.1.8"
   },
   "devDependencies": {
-    "electron": "^10.1.5",
-    "electron-builder": "^22.9.1",
-    "http-server": "^0.12.3"
+    "electron": "^29.1.4",
+    "electron-builder": "^24.13.3",
+    "http-server": "^14.1.1"
   },
   "build": {
     "publish": [
       {
         "provider": "generic",
-        "url": "http://127.0.0.1:8080/"
+        "url": "https://23e5-2409-40d2-1022-7d2c-3083-ec45-8f15-e3a6.ngrok-free.app"
       }
     ],
     "appId": "com.github.martin.electronupdaterexample",
@@ -48,8 +48,8 @@
     "win": {
       "target": "nsis",
       "verifyUpdateCodeSignature": false,
-      "publisherName": "Some Company - Stored in cert file",
-      "certificateFile": "./certs/some_file.pfx",
+      "publisherName": "Some Company",
+      "certificateFile": "./certs/RootCA.pfx",
       "certificatePassword": "some_password"
     }
   }

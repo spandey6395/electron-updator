@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="shortcut icon" href="./favicon.png"/>
   <title>Electron Updater Example</title>
 </head>
 <body>
-  Current version: <span id="version">vX.Y.Z</span>
+  <h1>Version Information</h1>
+  <p>Current version: <span id="version">vX.Y.Z</span></p>
   <div id="messages"></div>
+  <button id="send-message">Send Message to Main Process</button>
 <script>
 // Display the current version
-let version = window.location.hash.substring(1);
-document.getElementById('version').innerText = version;
+// let version = window.location.hash.substring(1);
+// document.getElementById('version').innerText = version;
 
-// Listen for messages
-const { ipcRenderer } = window.require('electron');
-ipcRenderer.on('message', function(event, text) {
+// Listen for messages from main process
+const { ipcRenderer } = require('electron');
+
+// Listen for the 'version' message sent from the main process
+ipcRenderer.on('version', function(event, version) {
+  // Update the version span element with the received version
+  document.getElementById('version').innerText = version;
+});
+
+ipcRenderer.on('message-from-main', function(event, text) {
   var container = document.getElementById('messages');
   var message = document.createElement('div');
   message.innerHTML = text;
   container.appendChild(message);
-})
+});
+
+// Send a message to the main process when the button is clicked
+document.getElementById('send-message').addEventListener('click', function() {
+  console.log("Buttonclicked");
+  ipcRenderer.send('message-from-renderer', 'Hello from renderer process!');
+});
 </script>
 </body>
 </html>

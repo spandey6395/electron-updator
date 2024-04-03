@@ -1,9 +1,11 @@
 // This is free and unencumbered software released into the public domain.
 // See LICENSE for details
 
-const {app, BrowserWindow, Menu, protocol, ipcMain} = require('electron');
+const {app, BrowserWindow, Menu, protocol, ipcMain, dialog} = require('electron');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
+var path = require("path");
+const url = require("url");
 
 // Disable security warnings and set react app path on dev env
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = true;
@@ -64,8 +66,10 @@ function sendStatusToWindow(text) {
 function createDefaultWindow() {
   win = new BrowserWindow({
     webPreferences: {
-      webSecurity: true,
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      contextIsolation: false,
+      webSecurity: true
     },
     width: 1280,
     height: 720
@@ -74,7 +78,19 @@ function createDefaultWindow() {
   win.on('closed', () => {
     win = null;
   });
-  win.loadURL(`file://${__dirname}/version.html#v${app.getVersion()}`);
+  win.loadURL(url.format({
+    pathname: path.join(__dirname, `/version.html`),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+    // Get the app version
+    const version = app.getVersion();
+
+    // Send the version information to the renderer process
+    win.webContents.on('did-finish-load', () => {
+      win.webContents.send('version', version);
+    });
   return win;
 }
 autoUpdater.on('checking-for-update', () => {
@@ -99,12 +115,42 @@ autoUpdater.on('update-downloaded', (ev, info) => {
   // Wait 5 seconds, then quit and install
   // In your application, you don't need to wait 5 seconds.
   // You could call autoUpdater.quitAndInstall(); immediately
-  sendStatusToWindow('Update downloaded');
+  // sendStatusToWindow('Update downloaded');
   
-  setTimeout(function() {
-    autoUpdater.quitAndInstall();  
-  }, 5000)
+  // setTimeout(function() {
+  //   autoUpdater.quitAndInstall();  
+  // }, 5000)
+// Display a dialog to the user asking for confirmation to download the update
+dialog.showMessageBox(win, {
+  type: 'question',
+  buttons: ['Yes', 'No'],
+  defaultId: 0,
+  title: 'Update Available',
+  message: 'An update is available. Do you want to download and install it now?'
+}).then(({ response }) => {
+  if (response === 0) {
+    // User chose to download the update
+    sendStatusToWindow('Downloading update...');
+    autoUpdater.quitAndInstall();
+  } else {
+    // User chose not to download the update
+    sendStatusToWindow('Update canceled by user.');
+  }
+}).catch(err => {
+  // Handle dialog errors if any
+  console.error(err);
+});
+
+
 })
+
+// Listen for message from renderer process
+ipcMain.on('message-from-renderer', (event, message) => {
+  console.log('Message from renderer:', message);
+  // Send a response back to the renderer process
+  event.sender.send('message-from-main', 'Hello from main process!');
+});
+
 app.on('ready', function() {
   // Create the Menu
   const menu = Menu.buildFromTemplate(template);
